@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="DoomscrollWrapped.Views.LoginPage"
+             BackgroundColor="#121212">
+
+    <Grid VerticalOptions="Fill" HorizontalOptions="Fill">
+
+        <ScrollView VerticalOptions="Center" HorizontalOptions="Center">
+
+            <VerticalStackLayout
+                Padding="30"
+                Spacing="15"
+                WidthRequest="280"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+
+                <Label
+                    Text="Doomscroll Wrapped"
+                    FontSize="32"
+                    FontAttributes="Bold"
+                    TextColor="#FFFFFF"
+                    HorizontalOptions="Center" 
+                    HorizontalTextAlignment="Center"
+                    Margin="0,0,0,25"/>
+
+                <Border StrokeShape="RoundRectangle 8" StrokeThickness="0" BackgroundColor="#1E1E1E" HeightRequest="50">
+                    <Entry 
+                        x:Name="EmailEntry"
+                        Placeholder="Email"
+                        PlaceholderColor="#777777"
+                        TextColor="#FFFFFF"
+                        Keyboard="Email"
+                        HorizontalTextAlignment="Center"
+                        VerticalOptions="Center"
+                        Margin="10,0" />
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 8" StrokeThickness="0" BackgroundColor="#1E1E1E" HeightRequest="50">
+                    <Entry 
+                        x:Name="PasswordEntry"
+                        Placeholder="Password"
+                        PlaceholderColor="#777777"
+                        TextColor="#FFFFFF"
+                        IsPassword="True"
+                        HorizontalTextAlignment="Center"
+                        VerticalOptions="Center"
+                        Margin="10,0" />
+                </Border>
+
+                <Button
+                    x:Name="LoginBtn"
+                    Text="Login"
+                    FontAttributes="Bold"
+                    TextColor="#FFFFFF"
+                    BackgroundColor="#8B0000"
+                    CornerRadius="8"
+                    HeightRequest="50"
+                    Clicked="OnLoginClicked"
+                    Margin="0,15,0,0" />
+
+                <Button
+                    x:Name="SignUpBtn"
+                    Text="Sign Up"
+                    FontAttributes="Bold"
+                    TextColor="#FFFFFF"
+                    BackgroundColor="#2A2A2A"
+                    CornerRadius="8"
+                    HeightRequest="50"
+                    Clicked="OnSignUpClicked" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

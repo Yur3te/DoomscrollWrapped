@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="DoomscrollWrapped.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:DoomscrollWrapped.Views"
+    Title="Doomscroll Wrapped"
+    FlyoutBehavior="Flyout"
+    FlowDirection="RightToLeft">
+
+    <Shell.MenuBarItems>
+        <MenuBarItem Text="Settings"/>
+    </Shell.MenuBarItems>
+
+    <Shell.FlyoutHeaderTemplate>
+        <DataTemplate>
+            <Grid BackgroundColor="#121212" HeightRequest="150" Padding="20" FlowDirection="LeftToRight">
+                <VerticalStackLayout VerticalOptions="End">
+                    <Label Text="Doomscroll" FontSize="20" FontAttributes="Bold" TextColor="White" />
+                    <Label Text="Wrapped" FontSize="20" FontAttributes="Bold" TextColor="#8B0000" Margin="0,0,0,5"/>
+                    <Label x:Name="EmailLabel" Text="{Binding UserEmail, StringFormat='{}Logged as: {0}'}" FontSize="14" TextColor="#AAAAAA" />
+                </VerticalStackLayout>
+            </Grid>
+        </DataTemplate>
+    </Shell.FlyoutHeaderTemplate>
+
+    <Shell.FlyoutContentTemplate>
+        <DataTemplate>
+            <Grid BackgroundColor="#121212" FlowDirection="LeftToRight">
+                <VerticalStackLayout Padding="20" Spacing="20">
+
+                    <Label Text="Navigation" FontSize="14" TextColor="#555555" FontAttributes="Bold" Margin="0,-10,0,10"/>
+
+                    <Label Text="🏠 Today's Wrapped" FontSize="18" TextColor="White">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnMenuTodayTapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                    <Label Text="📅 Custom Range" FontSize="18" TextColor="White">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnMenuCustomTapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                    <Label Text="📜 Wasted On Scroll" FontSize="18" TextColor="White">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnWastedOnScrollTapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                    <Label Text="🌍 Global Leaderboard" FontSize="18" TextColor="White">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnMenuLeaderboardTapped" />
+                        </Label.GestureRecognizers>
+                    </Label>
+
+                </VerticalStackLayout>
+
+            </Grid>
+        </DataTemplate>
+    </Shell.FlyoutContentTemplate>
+
+    <Shell.FlyoutFooterTemplate>
+        <DataTemplate>
+            <Grid BackgroundColor="#121212" Padding="20" HeightRequest="80">
+                <Button 
+                    BorderWidth="0"
+                    Text="Logout" 
+                    BackgroundColor="#2A2A2A" 
+                    TextColor="#FFFFFF" 
+                    CornerRadius="8" 
+                    VerticalOptions="Center" 
+                    Clicked="OnLogoutClicked" />
+            </Grid>
+        </DataTemplate>
+    </Shell.FlyoutFooterTemplate>
+
+    <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent
+            Title="Home"
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Route="MainPage" />
+    </FlyoutItem>
+
+    <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent
+            Title="Custom Range"
+            ContentTemplate="{DataTemplate local:CustomRangePage}"
+            Route="CustomRangePage" />
+    </FlyoutItem>
+
+    <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent
+            Title="Wasted On Scroll"
+            ContentTemplate="{DataTemplate local:WastedOnScrollPage}"
+            Route="WastedOnScrollPage" />
+    </FlyoutItem>
+
+    <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
+        <ShellContent
+            Title="Leaderboard"
+            ContentTemplate="{DataTemplate local:LeaderboardPage}"
+            Route="LeaderboardPage" />
+    </FlyoutItem>
+
+</Shell>
