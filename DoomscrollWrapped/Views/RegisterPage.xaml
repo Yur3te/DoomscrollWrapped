@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="DoomscrollWrapped.Views.LoginPage"
+             x:Class="DoomscrollWrapped.Views.RegisterPage"
+             Title="Create Account"
              BackgroundColor="#121212">
 
     <Grid VerticalOptions="Fill" HorizontalOptions="Fill">
@@ -16,8 +17,8 @@
                 VerticalOptions="Center">
 
                 <Label
-                    Text="Doomscroll Wrapped"
-                    FontSize="32"
+                    Text="Create Account"
+                    FontSize="28"
                     FontAttributes="Bold"
                     TextColor="#FFFFFF"
                     HorizontalOptions="Center"
@@ -26,7 +27,18 @@
 
                 <Border StrokeShape="RoundRectangle 8" StrokeThickness="0" BackgroundColor="#1E1E1E" HeightRequest="50">
                     <Entry
-                        x:Name="EmailEntry"
+                        x:Name="txtUsername"
+                        Placeholder="Username"
+                        PlaceholderColor="#777777"
+                        TextColor="#FFFFFF"
+                        HorizontalTextAlignment="Center"
+                        VerticalOptions="Center"
+                        Margin="10,0" />
+                </Border>
+
+                <Border StrokeShape="RoundRectangle 8" StrokeThickness="0" BackgroundColor="#1E1E1E" HeightRequest="50">
+                    <Entry
+                        x:Name="txtEmail"
                         Placeholder="Email"
                         PlaceholderColor="#777777"
                         TextColor="#FFFFFF"
@@ -38,7 +50,7 @@
 
                 <Border StrokeShape="RoundRectangle 8" StrokeThickness="0" BackgroundColor="#1E1E1E" HeightRequest="50">
                     <Entry
-                        x:Name="PasswordEntry"
+                        x:Name="txtPassword"
                         Placeholder="Password"
                         PlaceholderColor="#777777"
                         TextColor="#FFFFFF"
@@ -49,25 +61,25 @@
                 </Border>
 
                 <Button
-                    x:Name="LoginBtn"
-                    Text="Login"
+                    x:Name="CreateAccountBtn"
+                    Text="CREATE ACCOUNT"
                     FontAttributes="Bold"
                     TextColor="#FFFFFF"
                     BackgroundColor="#8B0000"
                     CornerRadius="8"
                     HeightRequest="50"
-                    Clicked="OnLoginClicked"
+                    Clicked="OnCreateAccountClicked"
                     Margin="0,15,0,0" />
 
                 <Button
-                    Text="Don't have an account? Sign Up"
+                    Text="Already have an account? Log In"
                     FontSize="14"
                     TextColor="#AAAAAA"
                     BackgroundColor="Transparent"
                     BorderWidth="0"
                     Padding="0"
                     Margin="0,10,0,0"
-                    Clicked="OnSignUpNavigateClicked" />
+                    Clicked="OnLogInClicked" />
 
             </VerticalStackLayout>
         </ScrollView>

@@ -28,7 +28,7 @@ namespace DoomscrollWrapped.Views
                 IsBusy = true;
                 LoginBtn.IsEnabled = false;
 
-                var session = await _supabaseClient.Auth.SignIn(EmailEntry.Text, PasswordEntry.Text);
+                var session = await _supabaseClient.Auth.SignIn(EmailEntry.Text.Trim(), PasswordEntry.Text);
 
                 if (session != null && session.User != null)
                 {
@@ -52,44 +52,9 @@ namespace DoomscrollWrapped.Views
             }
         }
 
-        private async void OnSignUpClicked(object sender, EventArgs e)
+        private async void OnSignUpNavigateClicked(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(EmailEntry.Text) || string.IsNullOrWhiteSpace(PasswordEntry.Text))
-            {
-                await DisplayAlert("Error", "Please enter both email and password.", "OK");
-                return;
-            }
-
-            try
-            {
-                IsBusy = true;
-                SignUpBtn.IsEnabled = false;
-
-                var signUpSession = await _supabaseClient.Auth.SignUp(EmailEntry.Text, PasswordEntry.Text);
-
-                if (signUpSession != null && signUpSession.User != null)
-                {
-                    var loginSession = await _supabaseClient.Auth.SignIn(EmailEntry.Text, PasswordEntry.Text);
-
-                    if (loginSession != null && loginSession.User != null)
-                    {
-                        var window = this.Window;
-                        if (window != null)
-                        {
-                            window.Page = new NavigationPage(new MainPage(_supabaseClient));
-                        }
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                await DisplayAlert("Sign Up Failed", ex.Message, "OK");
-            }
-            finally
-            {
-                IsBusy = false;
-                SignUpBtn.IsEnabled = true;
-            }
+            await Navigation.PushAsync(new RegisterPage(_supabaseClient));
         }
     }
 }
