@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 using DoomscrollWrapped.Views;
 using DoomscrollWrapped.Services;
+using DoomscrollWrapped.ViewModels;
 
 namespace DoomscrollWrapped
 {
@@ -77,8 +78,14 @@ namespace DoomscrollWrapped
                 }
             }
 
+            builder.Services.AddSingleton<IDailyLogService, DailyLogService>();
+            builder.Services.AddTransient<WastedOnScrollViewModel>();
+            builder.Services.AddTransient<LeaderboardViewModel>();
             builder.Services.AddTransient<LoginPage>();
+            builder.Services.AddTransient<RegisterPage>();
             builder.Services.AddTransient<MainPage>();
+            builder.Services.AddTransient<WastedOnScrollPage>();
+            builder.Services.AddTransient<LeaderboardPage>();
 
 #if DEBUG
             builder.Logging.AddDebug();
