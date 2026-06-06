@@ -1,14 +1,85 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:DoomscrollWrapped.ViewModels"
+             xmlns:models="clr-namespace:DoomscrollWrapped.Models"
              x:Class="DoomscrollWrapped.Views.LeaderboardPage"
+             x:DataType="vm:LeaderboardViewModel"
              BackgroundColor="#121212"
              FlowDirection="LeftToRight">
-    <Grid>
-        <Label Text="Global Leaderboard - Coming Soon"
-               TextColor="White"
-               HorizontalOptions="Center"
-               VerticalOptions="Center"
-               FontSize="18" />
+    <Grid RowDefinitions="*, Auto, *"
+          ColumnDefinitions="*, Auto, *">
+        <VerticalStackLayout Grid.Row="1"
+                             Grid.Column="1"
+                             Spacing="24"
+                             WidthRequest="340"
+                             MaximumWidthRequest="340">
+
+            <Label Text="Global Leaderboard"
+                   FontSize="32"
+                   FontAttributes="Bold"
+                   TextColor="#FFFFFF"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center" />
+
+            <Label Text="Top Doomscrollers"
+                   FontSize="16"
+                   TextColor="#AAAAAA"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   IsVisible="{Binding HasError}"
+                   TextColor="#FF6B6B"
+                   FontSize="14"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center" />
+
+            <ActivityIndicator IsRunning="{Binding IsLoading}"
+                               IsVisible="{Binding IsLoading}"
+                               Color="#8B0000"
+                               HorizontalOptions="Center" />
+
+            <Label Text="No doomscrollers yet."
+                   IsVisible="{Binding IsEmpty}"
+                   TextColor="#AAAAAA"
+                   FontSize="16"
+                   HorizontalOptions="Center"
+                   HorizontalTextAlignment="Center" />
+
+            <CollectionView ItemsSource="{Binding Entries}"
+                            IsVisible="{Binding HasEntries}"
+                            SelectionMode="None"
+                            MaximumHeightRequest="420">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:LeaderboardEntry">
+                        <Grid ColumnDefinitions="Auto, *, Auto"
+                              ColumnSpacing="16"
+                              Padding="0,10">
+                            <Label Grid.Column="0"
+                                   Text="{Binding RankDisplay}"
+                                   FontSize="24"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="Center"
+                                   WidthRequest="40" />
+                            <Label Grid.Column="1"
+                                   Text="{Binding Nickname}"
+                                   TextColor="#FFFFFF"
+                                   FontSize="18"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center"
+                                   LineBreakMode="TailTruncation" />
+                            <Label Grid.Column="2"
+                                   Text="{Binding HoursText}"
+                                   TextColor="#AAAAAA"
+                                   FontSize="16"
+                                   VerticalOptions="Center"
+                                   HorizontalOptions="End" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>
