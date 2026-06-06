@@ -77,18 +77,18 @@ namespace DoomscrollWrapped.Views
                                 }
                                 else if (eventOut.EventType == Android.App.Usage.UsageEventType.ActivityPaused)
                                 {
-                                    if (appStartTimes.TryGetValue(appName, out long startTimestamp))
+                                    long startTimestamp = appStartTimes.TryGetValue(appName, out long cachedStart) ? cachedStart : startTime;
+
+                                    long elapsedMs = eventOut.TimeStamp - startTimestamp;
+
+                                    if (elapsedMs > 0)
                                     {
-                                        long elapsedMs = eventOut.TimeStamp - startTimestamp;
-                                        if (elapsedMs > 0)
-                                        {
-                                            if (appMs.ContainsKey(appName))
-                                                appMs[appName] += elapsedMs;
-                                            else
-                                                appMs[appName] = elapsedMs;
-                                        }
-                                        appStartTimes.Remove(appName);
+                                        if (appMs.ContainsKey(appName))
+                                            appMs[appName] += elapsedMs;
+                                        else
+                                            appMs[appName] = elapsedMs;
                                     }
+                                    appStartTimes.Remove(appName);
                                 }
                             }
                         }
@@ -104,9 +104,7 @@ namespace DoomscrollWrapped.Views
 
                         if (appUsageMinutes.Count == 0)
                         {
-                            await DisplayAlert("Notice", "No usage recorded for today or you haven't opened matched apps.", "OK");
-                            LoadingSpinner.IsRunning = false;
-                            LoadingSpinner.IsVisible = false;
+                            DisplayZeroStatsUi();
                             return;
                         }
 
@@ -153,6 +151,7 @@ namespace DoomscrollWrapped.Views
                                 await _supabaseClient.From<DailyLog>().Insert(log);
                             }
                         }
+                        UpdateMetricsUi(totalWastedMinutes, tiktokMinutes, instagramMinutes, youtubeMinutes);
                     }
                     else
                     {
@@ -183,38 +182,49 @@ namespace DoomscrollWrapped.Views
             LoadingSpinner.IsRunning = false;
             LoadingSpinner.IsVisible = false;
             return;
-#endif
+# endif
+}
 
-            if (totalWastedMinutes > 0)
-            {
-                double hours = totalWastedMinutes / 60.0;
 
-                TikTokLabel.Text = tiktokMinutes > 0 ? $"TikTok: {tiktokMinutes} mins {(tiktokMinutes > 60 ? $"({Math.Round(tiktokMinutes/60.0, 1)} hrs)" : "")}" : "TikTok: Clean! ✨";
-                InstagramLabel.Text = instagramMinutes > 0 ? $"Instagram: {instagramMinutes} mins {(instagramMinutes > 60 ? $"({Math.Round(instagramMinutes/60.0, 1)} hrs)" : "")}" : "Instagram: Clean! ✨";
-                YouTubeLabel.Text = youtubeMinutes > 0 ? $"YouTube: {youtubeMinutes} mins {(youtubeMinutes > 60 ? $"({Math.Round(youtubeMinutes/60.0, 1)} hrs)" : "")}" : "YouTube: Clean! ✨";
+        private void UpdateMetricsUi(int totalMinutes, int tiktok, int instagram, int youtube)
+        {
+            double hours = totalMinutes / 60.0;
 
-                double booksWasted = hours / 5.0;
-                double moneyWasted = hours * 31.4;
-                double gymSessions = hours / 1.5;
-                double percentOfnewSkill = (hours / 20.0) * 100.0;
+            TikTokLabel.Text = tiktok > 0 ? $"TikTok: {tiktok} mins {(tiktok > 60 ? $"({Math.Round(tiktok / 60.0, 1)} hrs)" : "")}" : "TikTok: Clean! ✨";
+            InstagramLabel.Text = instagram > 0 ? $"Instagram: {instagram} mins {(instagram > 60 ? $"({Math.Round(instagram / 60.0, 1)} hrs)" : "")}" : "Instagram: Clean! ✨";
+            YouTubeLabel.Text = youtube > 0 ? $"YouTube: {youtube} mins {(youtube > 60 ? $"({Math.Round(youtube / 60.0, 1)} hrs)" : "")}" : "YouTube: Clean! ✨";
+            TotalTimeLabel.Text = $"For a whopping total of: {Math.Round(hours, 1)} hours!";
 
-                BooksLabel.Text = $"You could have read {booksWasted:F1} books.";
-                MoneyLabel.Text = $"You lost out on {moneyWasted:F2} zł (at 31.4/hr).";
-                GymLabel.Text = $"You missed {gymSessions:F1} gym sessions.";
-                SkillLabel.Text = $"You could learn {percentOfnewSkill:F4}% of new skill.";
+            double booksWasted = hours / 5.0;
+            double moneyWasted = hours * 31.4;
+            double gymSessions = hours / 1.5;
+            double percentOfnewSkill = (hours / 20.0) * 100.0;
 
-                LoadingSpinner.IsRunning = false;
-                LoadingSpinner.IsVisible = false;
-                ResultsGrid.IsVisible = true;
+            BooksLabel.Text = $"You could have read {booksWasted:F1} books.";
+            MoneyLabel.Text = $"You lost out on {moneyWasted:F2} zł (at 31.4/hr).";
+            GymLabel.Text = $"You missed {gymSessions:F1} gym sessions.";
+            SkillLabel.Text = $"You could learn {percentOfnewSkill:F4}% of new skill.";
 
-                SemanticScreenReader.Announce("Displaying today's wasted stats.");
-            }
-            else
-            {
-                LoadingSpinner.IsRunning = false;
-                LoadingSpinner.IsVisible = false;
-                await DisplayAlert("Congratulations!", "You haven't wasted any time on targeted apps today!", "OK");
-            }
+            ResetLoadingUi();
+            ResultsGrid.IsVisible = true;
+            SemanticScreenReader.Announce("Displaying today's wasted stats.");
+        }
+
+        private void DisplayZeroStatsUi()
+        {
+            TikTokLabel.Text = "TikTok: Clean! ✨";
+            InstagramLabel.Text = "Instagram: Clean! ✨";
+            YouTubeLabel.Text = "YouTube: Clean! ✨";
+            TotalTimeLabel.Text = "For a whopping total of: 0 hours!";
+
+            ResetLoadingUi();
+            ResultsGrid.IsVisible = true;
+        }
+
+        private void ResetLoadingUi()
+        {
+            LoadingSpinner.IsRunning = false;
+            LoadingSpinner.IsVisible = false;
         }
     }
 }
