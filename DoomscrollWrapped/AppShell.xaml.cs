@@ -43,12 +43,6 @@ namespace DoomscrollWrapped
             await Current.GoToAsync("//MainPage");
         }
 
-        private async void OnMenuCustomTapped(object sender, EventArgs e)
-        {
-            Current.FlyoutIsPresented = false;
-            await Current.GoToAsync("//CustomRangePage");
-        }
-
         private async void OnWastedOnScrollTapped(object sender, EventArgs e)
         {
             Current.FlyoutIsPresented = false;

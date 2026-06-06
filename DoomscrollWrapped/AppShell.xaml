@@ -37,12 +37,6 @@
                         </Label.GestureRecognizers>
                     </Label>
 
-                    <Label Text="📅 Custom Range" FontSize="18" TextColor="White">
-                        <Label.GestureRecognizers>
-                            <TapGestureRecognizer Tapped="OnMenuCustomTapped" />
-                        </Label.GestureRecognizers>
-                    </Label>
-
                     <Label Text="📜 Wasted On Scroll" FontSize="18" TextColor="White">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Tapped="OnWastedOnScrollTapped" />
@@ -81,13 +75,6 @@
             Title="Home"
             ContentTemplate="{DataTemplate local:MainPage}"
             Route="MainPage" />
-    </FlyoutItem>
-
-    <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
-        <ShellContent
-            Title="Custom Range"
-            ContentTemplate="{DataTemplate local:CustomRangePage}"
-            Route="CustomRangePage" />
     </FlyoutItem>
 
     <FlyoutItem FlyoutDisplayOptions="AsSingleItem">
