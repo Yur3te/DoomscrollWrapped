@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using DoomscrollWrapped.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace DoomscrollWrapped.ViewModels
@@ -64,16 +65,16 @@ namespace DoomscrollWrapped.ViewModels
             {
                 IReadOnlyDictionary<string, int> stats = await _dailyLogService.GetAllTimeMinutesByAppAsync();
 
-                if (stats.Count == 0)
+                if (stats.Values.Sum() == 0)
                 {
                     ApplyZeroStats();
                 }
                 else
                 {
-                    int tiktok = stats.TryGetValue("TikTok", out int tiktokMinutes) ? tiktokMinutes : 0;
-                    int instagram = stats.TryGetValue("Instagram", out int instagramMinutes) ? instagramMinutes : 0;
-                    int youtube = stats.TryGetValue("YouTube", out int youtubeMinutes) ? youtubeMinutes : 0;
-                    int totalMinutes = tiktok + instagram + youtube;
+                    int tiktok = GetMinutesForApp(stats, "TikTok");
+                    int instagram = GetMinutesForApp(stats, "Instagram");
+                    int youtube = GetMinutesForApp(stats, "YouTube");
+                    int totalMinutes = stats.Values.Sum();
 
                     ApplyStats(tiktok, instagram, youtube, totalMinutes);
                 }
@@ -116,6 +117,13 @@ namespace DoomscrollWrapped.ViewModels
             MoneyText = "You lost out on 0.00 zł (at 31.4/hr).";
             GymText = "You missed 0.0 gym sessions.";
             SkillText = "You could learn 0.0000% of new skill.";
+        }
+
+        private static int GetMinutesForApp(IReadOnlyDictionary<string, int> stats, string appName)
+        {
+            return stats
+                .Where(kvp => string.Equals(kvp.Key, appName, StringComparison.OrdinalIgnoreCase))
+                .Sum(kvp => kvp.Value);
         }
 
         private static string FormatAppText(string appName, int minutes)

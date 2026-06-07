@@ -8,6 +8,8 @@ namespace DoomscrollWrapped.Services
 {
     public class DailyLogService : IDailyLogService
     {
+        public const string UnknownAppName = "Unknown";
+        private const int PageSize = 1000;
         private readonly Client _supabaseClient;
 
         public DailyLogService(Client supabaseClient)
@@ -25,26 +27,22 @@ namespace DoomscrollWrapped.Services
                 return new Dictionary<string, int>();
             }
 
-            var response = await _supabaseClient
-                .From<DailyLog>()
-                .Where(x => x.UserId == userId)
-                .Get();
+            var userLogs = await FetchUserDailyLogsAsync(userId);
 
-            var totals = new Dictionary<string, int>();
-            foreach (var log in response.Models)
+            var totals = new Dictionary<string, int>(System.StringComparer.OrdinalIgnoreCase);
+            foreach (var log in userLogs)
             {
-                if (string.IsNullOrEmpty(log.AppName))
-                {
-                    continue;
-                }
+                string appName = string.IsNullOrWhiteSpace(log.AppName)
+                    ? UnknownAppName
+                    : log.AppName.Trim();
 
-                if (totals.TryGetValue(log.AppName, out int existing))
+                if (totals.TryGetValue(appName, out int existing))
                 {
-                    totals[log.AppName] = existing + log.WastedMinutes;
+                    totals[appName] = existing + log.WastedMinutes;
                 }
                 else
                 {
-                    totals[log.AppName] = log.WastedMinutes;
+                    totals[appName] = log.WastedMinutes;
                 }
             }
 
@@ -53,12 +51,10 @@ namespace DoomscrollWrapped.Services
 
         public async Task<IReadOnlyList<LeaderboardEntry>> GetGlobalLeaderboardAsync()
         {
-            var logsResponse = await _supabaseClient
-                .From<DailyLog>()
-                .Get();
+            var allLogs = await FetchAllDailyLogsAsync();
 
             var totalsByUser = new Dictionary<string, int>();
-            foreach (var log in logsResponse.Models)
+            foreach (var log in allLogs)
             {
                 if (string.IsNullOrEmpty(log.UserId))
                 {
@@ -92,7 +88,6 @@ namespace DoomscrollWrapped.Services
             }
             catch
             {
-                
             }
 
             var entries = totalsByUser
@@ -111,6 +106,69 @@ namespace DoomscrollWrapped.Services
             }
 
             return entries;
+        }
+
+        private async Task<List<DailyLog>> FetchUserDailyLogsAsync(string userId)
+        {
+            var userLogs = new List<DailyLog>();
+            int offset = 0;
+
+            while (true)
+            {
+                var response = await _supabaseClient
+                    .From<DailyLog>()
+                    .Filter("user_id", Supabase.Postgrest.Constants.Operator.Equals, userId)
+                    .Order(x => x.Id, Supabase.Postgrest.Constants.Ordering.Ascending)
+                    .Range(offset, offset + PageSize - 1)
+                    .Get();
+
+                if (response.Models.Count == 0)
+                {
+                    break;
+                }
+
+                userLogs.AddRange(response.Models);
+
+                if (response.Models.Count < PageSize)
+                {
+                    break;
+                }
+
+                offset += PageSize;
+            }
+
+            return userLogs;
+        }
+
+        private async Task<List<DailyLog>> FetchAllDailyLogsAsync()
+        {
+            var allLogs = new List<DailyLog>();
+            int offset = 0;
+
+            while (true)
+            {
+                var response = await _supabaseClient
+                    .From<DailyLog>()
+                    .Order(x => x.Id, Supabase.Postgrest.Constants.Ordering.Ascending)
+                    .Range(offset, offset + PageSize - 1)
+                    .Get();
+
+                if (response.Models.Count == 0)
+                {
+                    break;
+                }
+
+                allLogs.AddRange(response.Models);
+
+                if (response.Models.Count < PageSize)
+                {
+                    break;
+                }
+
+                offset += PageSize;
+            }
+
+            return allLogs;
         }
 
         private static string ResolveNickname(string userId, IReadOnlyDictionary<string, string> nicknamesByUserId)
